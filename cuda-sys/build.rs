@@ -78,7 +78,7 @@ fn main() {
         }
     };
     println!("cargo:rustc-link-search=native={}", cuda_lib_dir);
-    println!("cargo:rustc-link-lib=cuda");
+    // println!("cargo:rustc-link-lib=cuda"); # FIXME: Causes build errors on linux
     println!("cargo:rustc-link-lib=cudart");
 
     // Generate bindings - fail fast if this doesn't work

@@ -48,7 +48,7 @@ fn main() {
         }
     };
     println!("cargo:rustc-link-search=native={}", cuda_lib_dir);
-    println!("cargo:rustc-link-lib=cuda");
+    // println!("cargo:rustc-link-lib=cuda");  # FIXME: Causes build errors on linux
     println!("cargo:rustc-link-lib=cudart");
 
     // Link against the ibverbs and mlx5 libraries (used by rdmaxcel-sys)
