@@ -63,7 +63,7 @@ ENABLE_MSG_LOGGING = (
 os.environ.update(
     {
         "CXXFLAGS": f"-D_GLIBCXX_USE_CXX11_ABI={int(torch._C._GLIBCXX_USE_CXX11_ABI)}",
-        "RUSTFLAGS": " ".join(["-Zthreads=16", ENABLE_MSG_LOGGING]),
+        "RUSTFLAGS": str.join(" ", [os.getenv("RUSTFLAGS", default=""), "-Zthreads=16", ENABLE_MSG_LOGGING]),
         "LIBTORCH_LIB": TORCH_LIB_PATH,
         "LIBTORCH_INCLUDE": ":".join(torch_include_paths()),
         "_GLIBCXX_USE_CXX11_ABI": str(int(torch._C._GLIBCXX_USE_CXX11_ABI)),
