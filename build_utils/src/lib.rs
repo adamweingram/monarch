@@ -225,7 +225,7 @@ pub fn find_nccl_home() -> Option<String> {
     let mut nccl_home = get_env_var_with_rerun("NCCL_HOME")
         .ok()
         .or_else(|| get_env_var_with_rerun("NCCL_PATH").ok());
-    
+
     // TODO(awng): Add support for non-envvar specified NCCL paths.
 
     nccl_home
