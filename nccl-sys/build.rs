@@ -24,6 +24,10 @@ fn main() {
             "-I{}/include",
             build_utils::find_cuda_home().unwrap()
         ))
+        .clang_arg(format!(
+            "-I{}/include",
+            build_utils::find_nccl_home().unwrap()
+        ))
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         // Communicator creation and management
         .allowlist_function("ncclGetLastError")

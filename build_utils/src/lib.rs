@@ -215,6 +215,22 @@ pub fn get_cuda_lib_dir() -> Result<String, BuildError> {
     ))
 }
 
+/// Find NCCL home directory using various heuristics
+///
+/// This function attempts to locate CUDA installation through:
+/// 1. NCCL_HOME environment variable
+/// 2. NCCL_PATH environment variable
+pub fn find_nccl_home() -> Option<String> {
+    // Guess 1: Environment variables
+    let mut nccl_home = get_env_var_with_rerun("NCCL_HOME")
+        .ok()
+        .or_else(|| get_env_var_with_rerun("NCCL_PATH").ok());
+    
+    // TODO(awng): Add support for non-envvar specified NCCL paths.
+
+    nccl_home
+}
+
 /// Discover Python environment directories using sysconfig
 ///
 /// Returns tuple of (include_dir, lib_dir) as optional strings
