@@ -28,6 +28,7 @@ fn main() {
     let mut libtorch_lib_dir: Option<PathBuf> = None;
     let mut cxx11_abi = None;
     let mut cuda_home: Option<PathBuf> = None;
+    let mut nccl_home: Option<PathBuf> = None;
     let python_interpreter = std::env::var("PYO3_PYTHON")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("python"));
@@ -88,6 +89,17 @@ fn main() {
     }
     let cuda_home = cuda_home.expect("could not find CUDA_HOME");
 
+    nccl_home = Some(
+        build_utils::get_env_var_with_rerun("NCCL_HOME")
+            .unwrap()
+            .into(),
+    );
+    if nccl_home.is_none() {
+        eprintln!(
+            "[WARNING] Could not find NCCL_HOME! Is NCCL part of your CUDA install, or did you forget to set the environment variable?"
+        );
+    }
+
     let mut python_include: Option<PathBuf> = None;
     let mut python_include_dir: Option<PathBuf> = None;
     // Include Python headers for compatibility with torch-sys
@@ -137,6 +149,12 @@ fn main() {
     // Add CUDA toolkit includes
     libtorch_include_dirs.push(format!("{}/include", cuda_home.display()).into());
 
+    // Add NCCL includes (if not part of CUDA install)
+    if nccl_home.is_some() {
+        libtorch_include_dirs
+            .push(format!("{}/include", nccl_home.clone().unwrap().display()).into());
+    }
+
     // Prefix includes with `monarch` to maintain consistency with fbcode
     // folder structure
     CFG.include_prefix = "monarch/torch-sys-cuda";
@@ -169,6 +187,12 @@ fn main() {
         "cargo::rustc-link-search=native={}/lib64",
         cuda_home.display()
     );
+    if nccl_home.is_some() {
+        println!(
+            "cargo::rustc-link-search=native={}/lib",
+            nccl_home.clone().unwrap().display()
+        );
+    }
 
     // Set runtime paths
     println!(
